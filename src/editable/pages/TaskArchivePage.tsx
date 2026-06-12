@@ -89,31 +89,33 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
   const label = taskConfig?.label || task
   const deck = taskDeck[task]
   const Icon = deck.icon
-  const archiveVars = { '--archive-bg': preset.colors.background, '--archive-text': preset.colors.foreground, '--archive-surface': preset.colors.surface, '--archive-accent': preset.colors.accent } as CSSProperties
+  const archiveVars = task === 'sbm'
+    ? { '--archive-bg': '#30303c', '--archive-text': '#ffffff', '--archive-surface': '#17181d', '--archive-accent': '#d600b8', '--editable-container': '1180px' } as CSSProperties
+    : { '--archive-bg': preset.colors.background, '--archive-text': preset.colors.foreground, '--archive-surface': preset.colors.surface, '--archive-accent': preset.colors.accent, '--editable-container': '1180px' } as CSSProperties
   const categoryLabel = category === 'all' ? 'All categories' : CATEGORY_OPTIONS.find((item) => item.slug === category)?.name || category
 
   return (
     <EditableSiteShell>
       <main style={archiveVars} className="bg-[var(--archive-bg)] text-[var(--archive-text)]">
-        <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-20">
-          <div className="rounded-[2.5rem] border border-[var(--editable-border)] bg-[var(--archive-surface)] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.08)] sm:p-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white/70 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-[var(--archive-accent)]"><Icon className="h-4 w-4" /> {label}</div>
-            <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.07em] sm:text-6xl">{voice?.headline || `Browse ${label}`}</h1>
+        <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-16">
+          <div className="rounded-lg border border-[var(--editable-border)] bg-[var(--archive-surface)] p-7 shadow-[0_24px_80px_rgba(15,23,42,0.08)] sm:p-10">
+            <div className="inline-flex items-center gap-2 rounded-lg border border-[var(--editable-border)] bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-[var(--archive-accent)]"><Icon className="h-4 w-4" /> {label}</div>
+            <h1 className="mt-5 max-w-4xl text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">{voice?.headline || `Browse ${label}`}</h1>
             <p className="mt-6 max-w-2xl text-base leading-8 opacity-70">{voice?.description || SITE_CONFIG.description}</p>
-            <div className="mt-6 rounded-[1.5rem] border border-[var(--editable-border)] bg-white/55 p-4 text-sm font-bold leading-7 opacity-75">{deck.promise}</div>
+            <div className="mt-6 rounded-lg border border-[var(--editable-border)] bg-white/10 p-4 text-sm font-bold leading-7 opacity-75">{deck.promise}</div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={basePath} className="rounded-full bg-[var(--archive-text)] px-5 py-3 text-sm font-black text-[var(--archive-bg)]">Browse all</Link>
-              <Link href="/search" className="rounded-full border border-[var(--editable-border)] px-5 py-3 text-sm font-black">Search posts</Link>
+              <Link href={basePath} className="rounded-lg bg-[var(--archive-accent)] px-5 py-3 text-sm font-black text-white">Browse all</Link>
+              <Link href="/search" className="rounded-lg border border-[var(--editable-border)] px-5 py-3 text-sm font-black">Search bookmarks</Link>
             </div>
           </div>
 
-          <form action={basePath} className="self-end rounded-[2rem] border border-[var(--editable-border)] bg-white/70 p-5 shadow-sm backdrop-blur">
+          <form action={basePath} className="self-end rounded-lg border border-[var(--editable-border)] bg-white/90 p-5 text-[#191b22] shadow-sm backdrop-blur">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] opacity-55"><Filter className="h-4 w-4" /> Filter</div>
-            <select name="category" defaultValue={category} className="mt-4 h-12 w-full rounded-2xl border border-[var(--editable-border)] bg-white px-4 text-sm font-bold outline-none">
+            <select name="category" defaultValue={category} className="mt-4 h-12 w-full rounded-lg border border-[var(--editable-border)] bg-white px-4 text-sm font-bold outline-none">
               <option value="all">All categories</option>
               {CATEGORY_OPTIONS.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
             </select>
-            <button className="mt-3 h-12 w-full rounded-2xl bg-[var(--archive-text)] text-sm font-black text-[var(--archive-bg)]">Apply</button>
+            <button className="mt-3 h-12 w-full rounded-lg bg-[#17181d] text-sm font-black text-white">Apply</button>
             <p className="mt-3 text-xs font-bold opacity-55">Showing: {categoryLabel}</p>
           </form>
         </section>
@@ -133,7 +135,7 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             {pagination.hasPrevPage ? <Link href={pageHref(basePath, category, page - 1)} className="rounded-full border border-[var(--editable-border)] bg-white px-5 py-3 text-sm font-black">Previous</Link> : null}
-            <span className="rounded-full bg-[var(--archive-text)] px-5 py-3 text-sm font-black text-[var(--archive-bg)]">Page {page} of {pagination.totalPages || 1}</span>
+            <span className="rounded-lg bg-[var(--archive-accent)] px-5 py-3 text-sm font-black text-white">Page {page} of {pagination.totalPages || 1}</span>
             {pagination.hasNextPage ? <Link href={pageHref(basePath, category, page + 1)} className="rounded-full border border-[var(--editable-border)] bg-white px-5 py-3 text-sm font-black">Next</Link> : null}
           </div>
         </section>
@@ -239,14 +241,17 @@ function ImageArchiveCard({ post, href, index }: { post: SitePost; href: string;
 function BookmarkArchiveCard({ post, href, index }: { post: SitePost; href: string; index: number }) {
   const website = getField(post, ['website', 'url', 'link'])
   return (
-    <Link href={href} className="group block rounded-[1.7rem] border border-[var(--editable-border)] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:bg-[var(--archive-text)] hover:text-[var(--archive-bg)]">
+    <Link href={href} className="group block rounded-lg border border-white/10 bg-[#17181d] p-6 text-white shadow-sm transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(0,0,0,0.22)]">
       <div className="flex items-center justify-between gap-3">
-        <span className="rounded-full border border-current/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em]">Save {String(index + 1).padStart(2, '0')}</span>
-        <Bookmark className="h-5 w-5" />
+        <span className="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#f2a0ff]">SBM {String(index + 1).padStart(2, '0')}</span>
+        <Bookmark className="h-5 w-5 text-[#d600b8]" />
       </div>
-      <h2 className="mt-8 text-2xl font-black leading-tight tracking-[-0.05em]">{post.title}</h2>
-      <p className="mt-4 line-clamp-4 text-sm leading-6 opacity-70">{getSummary(post)}</p>
-      {website ? <p className="mt-5 truncate text-xs font-black uppercase tracking-[0.16em] opacity-60">{website.replace(/^https?:\/\//, '')}</p> : null}
+      <h2 className="mt-8 text-2xl font-black leading-tight tracking-tight">{post.title}</h2>
+      <p className="mt-4 line-clamp-4 text-sm leading-6 text-white/68">{getSummary(post)}</p>
+      <div className="mt-6 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+        {website ? <p className="min-w-0 truncate text-xs font-black uppercase tracking-[0.14em] text-white/55">{website.replace(/^https?:\/\//, '')}</p> : <span />}
+        <span className="inline-flex shrink-0 items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-[#f2a0ff]">Open <ArrowRight className="h-4 w-4" /></span>
+      </div>
     </Link>
   )
 }

@@ -3,16 +3,16 @@ import { slot4BrandConfig } from '@/editable/theme/brand.config'
 export const globalContent = {
   site: {
     name: slot4BrandConfig.siteName,
-    tagline: slot4BrandConfig.tagline || 'Independent reading platform',
+    tagline: slot4BrandConfig.tagline || 'Social bookmarking resource hub',
     domain: slot4BrandConfig.domain,
     baseUrl: slot4BrandConfig.baseUrl,
   },
   nav: {
-    tagline: 'Independent reading platform',
+    tagline: '',
     primaryLinks: [
-      { label: 'Articles', href: '/articles' },
-      { label: 'Visuals', href: '/image-sharing' },
-      { label: 'Listings', href: '/listings' },
+      { label: 'SBM', href: '/sbm' },
+      { label: 'Search', href: '/search' },
+      { label: 'Create', href: '/create' },
       { label: 'Contact', href: '/contact' },
     ],
     actions: {
@@ -21,16 +21,16 @@ export const globalContent = {
     },
   },
   footer: {
-    tagline: 'Stories, resources, and discoverable posts',
-    description: 'A connected publishing surface for articles, visuals, listings, profiles, bookmarks, and downloadable resources.',
+    tagline: 'Saved links, resources, and curated SBM posts',
+    description: 'A focused social bookmarking surface for saved links, useful references, curated resources, and cleaner web discovery.',
     columns: [
       {
         title: 'Explore',
         links: [
-          { label: 'Articles', href: '/articles' },
-          { label: 'Listings', href: '/listings' },
-          { label: 'Images', href: '/image-sharing' },
-          { label: 'PDF Library', href: '/pdf' },
+          { label: 'Social Bookmarking', href: '/sbm' },
+          { label: 'Search Resources', href: '/search' },
+          { label: 'Submit Bookmark', href: '/create' },
+          { label: 'Contact Support', href: '/contact' },
         ],
       },
       {
@@ -41,7 +41,7 @@ export const globalContent = {
         ],
       },
     ],
-    bottomNote: 'Built for clean discovery and connected publishing.',
+    bottomNote: 'Built for clean social bookmarking discovery.',
   },
   commonLabels: {
     readMore: 'Read more',
