@@ -150,7 +150,9 @@ const mapSrcFor = (post: SitePost) => {
 
 export function TaskDetailView({ task, post, related, comments = [] }: { task: TaskKey; post: SitePost; related: SitePost[]; comments?: Array<{ id: string; name: string; comment: string; createdAt: string }> }) {
   const preset = getVisualPreset(visualSystem.recommendedPreset as any)
-  const detailVars = { '--detail-bg': preset.colors.background, '--detail-text': preset.colors.foreground, '--detail-surface': preset.colors.surface, '--detail-accent': preset.colors.accent } as CSSProperties
+  const detailVars = task === 'sbm'
+    ? { '--detail-bg': '#30303c', '--detail-text': '#ffffff', '--detail-surface': '#17181d', '--detail-accent': '#d600b8', '--editable-container': '1180px' } as CSSProperties
+    : { '--detail-bg': preset.colors.background, '--detail-text': preset.colors.foreground, '--detail-surface': preset.colors.surface, '--detail-accent': preset.colors.accent, '--editable-container': '1180px' } as CSSProperties
 
   return (
     <EditableSiteShell>
@@ -296,16 +298,23 @@ function ImageDetail({ post, related }: { post: SitePost; related: SitePost[] })
 
 function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[] }) {
   const website = getField(post, ['website', 'url', 'link'])
+  const category = categoryOf(post, 'Social Bookmark')
   return (
-    <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8 lg:py-16">
-      <article className="rounded-[2.7rem] border border-[var(--editable-border)] bg-white p-7 shadow-[0_30px_90px_rgba(15,23,42,0.08)] sm:p-10">
+    <section className="mx-auto grid max-w-[var(--editable-container)] gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:px-8 lg:py-14">
+      <article className="rounded-lg border border-white/10 bg-[var(--detail-surface)] p-7 shadow-[0_30px_90px_rgba(0,0,0,0.22)] sm:p-10">
         <BackLink task="sbm" />
-        <div className="mt-10 flex h-20 w-20 items-center justify-center rounded-[2rem] bg-[var(--detail-text)] text-[var(--detail-bg)]"><Bookmark className="h-9 w-9" /></div>
-        <h1 className="mt-7 text-4xl font-black leading-[0.98] tracking-[-0.07em] sm:text-6xl">{post.title}</h1>
-        {website ? <Link href={website} target="_blank" rel="noreferrer" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--detail-text)] px-5 py-3 text-sm font-black text-[var(--detail-bg)]">Open saved resource <ExternalLink className="h-4 w-4" /></Link> : null}
+        <div className="mt-10 flex h-16 w-16 items-center justify-center rounded-lg bg-[var(--detail-accent)] text-white"><Bookmark className="h-8 w-8" /></div>
+        <p className="mt-8 text-xs font-black uppercase tracking-[0.22em] text-[#f2a0ff]">{category}</p>
+        <h1 className="mt-4 max-w-4xl text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">{post.title}</h1>
+        <p className="mt-5 max-w-3xl text-base leading-8 text-white/68">A curated social bookmarking resource with destination context, notes, and related saved links.</p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          {website ? <Link href={website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-[var(--detail-accent)] px-5 py-3 text-sm font-black text-white">Open saved resource <ExternalLink className="h-4 w-4" /></Link> : null}
+          <Link href="/create" className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-5 py-3 text-sm font-black text-white">Submit similar</Link>
+          <Link href="/search" className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-5 py-3 text-sm font-black text-white">Search SBM</Link>
+        </div>
         <BodyContent post={post} />
       </article>
-      <RelatedPanel task="sbm" post={post} related={related} />
+      <RelatedPanel task="sbm" post={post} related={related} hideAbout />
     </section>
   )
 }
@@ -425,22 +434,25 @@ function BadgeLine({ label, value }: { label: string; value: string }) {
   return <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm"><span className="font-black uppercase tracking-[0.16em] opacity-60">{label}</span><span className="font-black">{value}</span></div>
 }
 
-function RelatedPanel({ task, post, related, compact = false }: { task: TaskKey; post: SitePost; related: SitePost[]; compact?: boolean }) {
+function RelatedPanel({ task, post, related, compact = false, hideAbout = false }: { task: TaskKey; post: SitePost; related: SitePost[]; compact?: boolean; hideAbout?: boolean }) {
   const taskConfig = getTaskConfig(task)
+  const panelClass = task === 'sbm'
+    ? 'rounded-lg border border-white/10 bg-[#17181d] p-5 text-white shadow-[0_20px_60px_rgba(0,0,0,0.18)]'
+    : 'rounded-[2rem] border border-[var(--editable-border)] bg-white/70 p-5 backdrop-blur'
   return (
     <aside className="min-w-0 space-y-5">
-      {!compact ? (
-        <div className="rounded-[2rem] border border-[var(--editable-border)] bg-white/70 p-5 backdrop-blur">
+      {!compact && !hideAbout ? (
+        <div className={panelClass}>
           <p className="text-xs font-black uppercase tracking-[0.22em] opacity-55">About this post</p>
           <div className="mt-4 grid gap-3 text-sm font-bold opacity-75">
             <p className="inline-flex items-center gap-2"><Tag className="h-4 w-4" /> Task: {taskConfig?.label || task}</p>
             <p className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Site: {SITE_CONFIG.name}</p>
-            {post.publishedAt ? <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p> : null}
+            {task !== 'sbm' && post.publishedAt ? <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p> : null}
           </div>
         </div>
       ) : null}
       {related.length ? (
-        <div className="rounded-[2rem] border border-[var(--editable-border)] bg-white/70 p-5 backdrop-blur">
+        <div className={panelClass}>
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-lg font-black tracking-[-0.04em]">More like this</h2>
             <Link href={taskConfig?.route || '/'} className="text-xs font-black uppercase tracking-[0.16em] opacity-55">View all</Link>
@@ -457,8 +469,8 @@ function RelatedPanel({ task, post, related, compact = false }: { task: TaskKey;
 function RelatedCard({ task, post }: { task: TaskKey; post: SitePost }) {
   const image = getImages(post)[0]
   return (
-    <Link href={buildPostUrl(task, post.slug)} className="group flex gap-3 rounded-2xl border border-[var(--editable-border)] bg-white p-3 transition hover:-translate-y-0.5 hover:shadow-lg">
-      {image && task !== 'sbm' ? <img src={image} alt="" className="h-20 w-20 shrink-0 rounded-xl object-cover" /> : <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-[var(--detail-bg)]"><FileText className="h-6 w-6 opacity-45" /></div>}
+    <Link href={buildPostUrl(task, post.slug)} className={`group flex gap-3 rounded-lg border p-3 transition hover:-translate-y-0.5 hover:shadow-lg ${task === 'sbm' ? 'border-white/10 bg-white/5 text-white' : 'border-[var(--editable-border)] bg-white'}`}>
+      {image && task !== 'sbm' ? <img src={image} alt="" className="h-20 w-20 shrink-0 rounded-xl object-cover" /> : <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-[var(--detail-bg)]"><FileText className="h-6 w-6 opacity-45" /></div>}
       <div className="min-w-0">
         <h3 className="line-clamp-3 text-sm font-black leading-tight tracking-[-0.03em]">{post.title}</h3>
         <p className="mt-2 line-clamp-2 text-xs leading-5 opacity-60">{summaryText(post)}</p>
