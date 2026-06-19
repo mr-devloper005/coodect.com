@@ -6,6 +6,7 @@ import { fetchHomeTaskFeed, fetchHomeTimeSections, type HomeTimeSection } from '
 import { pagesContent } from '@/editable/content/pages.content'
 import type { SitePost } from '@/lib/site-connector'
 import { EditableHomeCta, EditableHomeHero, EditableMagazineSplit, EditableStoryRail, EditableTimeCollections } from '@/editable/sections/HomeSections'
+import { AdHomeBand, AdHomeRail } from '@/editable/components/AdSlots'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 
 export const revalidate = 300
@@ -39,6 +40,7 @@ export default async function HomePage() {
   return (
     <EditableSiteShell>
       <main>
+      <AdHomeRail />
       <SchemaJsonLd
         data={{
           '@context': 'https://schema.org',
@@ -54,6 +56,7 @@ export default async function HomePage() {
       />
       <EditableHomeHero primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
       <EditableStoryRail primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
+      <AdHomeBand className="py-10" />
       <EditableMagazineSplit primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
       <EditableTimeCollections primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
       <EditableHomeCta />
